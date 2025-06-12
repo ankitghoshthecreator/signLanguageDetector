@@ -41,3 +41,28 @@ y_test_tensor = torch.tensor(y_test, dtype=torch.long)
 # Create dataset and loader
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+
+
+class SignLanguageNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SignLanguageNN, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, output_size)
+        )
+
+    def forward(self, x):
+        return self.model(x)
+
+
+input_size = X_train.shape[1]   # 63
+hidden_size = 64
+output_size = len(np.unique(y))  # 2 classes
+
+model = SignLanguageNN(input_size, hidden_size, output_size)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
